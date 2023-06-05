@@ -27,5 +27,4 @@ var checkUserAuth = async (req:Request, res:Response, next:NextFunction) => {
     res.status(401).send({ "status": "failed", "message": "Unauthorized User, No Token" })
   }
 }
-
-module.exports = checkUserAuth;
+export default checkUserAuth;

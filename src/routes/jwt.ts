@@ -1,9 +1,12 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const checkUserAuth = require('../middlewares/auth-middleware')
-require('dotenv').config();
+import * as express from "express";
+let router = express.Router();
+
+import User from "../models/User";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import checkUserAuth from "../middlewares/auth-middleware";
+import dotenv from "dotenv";
+dotenv.config();
 import { Request, Response } from "express";
 //REGISTER
 router.post("/register", async (req:Request, res:Response) => {
@@ -24,12 +27,12 @@ router.post("/register", async (req:Request, res:Response) => {
        
         const accessToken = jwt.sign(
             { "email": user.email },
-            process.env.ACCESS_TOKEN_SECRET,
+            process.env.ACCESS_TOKEN_SECRET  as string,
             { expiresIn: '30s' }
         );
         const refreshToken = jwt.sign(
             { "username": user.email },
-            process.env.REFRESH_TOKEN_SECRET,
+            process.env.REFRESH_TOKEN_SECRET  as string,
             { expiresIn: '1d' }
         );
          res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'none', secure: false, maxAge: 24 * 60 * 60 * 1000 });
@@ -74,13 +77,13 @@ router.post("/login", async (req:Request, res:Response) => {
                 // "roles": foundUser.roles
             }
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN_SECRET  as string,
         { expiresIn: '15s' }
     )
 
     const refreshToken = jwt.sign(
         { "email": foundUser.email },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET  as string,
         { expiresIn: '1d' }
     )
 
@@ -109,11 +112,11 @@ router.post("/refresh", async (req:Request, res:Response) => {
 
     jwt.verify(
         refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET  as string,
         async (err:any, decoded:any) => {
             if (err) return res.status(403).json({ message: 'Forbidden' })
-
-            const foundUser = await User.findOne({ username: decoded.username }).exec()
+            let foundUser: any = {};
+            foundUser = await User.findOne({ username: decoded.username }).exec()
 
             if (!foundUser) return res.status(401).json({ message: 'Unauthorized' })
 
@@ -124,7 +127,7 @@ router.post("/refresh", async (req:Request, res:Response) => {
                         "roles": foundUser.roles
                     }
                 },
-                process.env.ACCESS_TOKEN_SECRET,
+                process.env.ACCESS_TOKEN_SECRET  as string,
                 { expiresIn: '15m' }
             )
 
@@ -152,13 +155,13 @@ router.get("/checkoutauth", checkUserAuth, async(req:Request, res:Response)=>{
 router.get("/checktokenvalidity", async(req:Request, res:Response)=>{
    
     const token = (req.headers.authorization as string).split(' ')[1]
-
+    let email:any;
     // Verify Token
-    const { email } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+     email = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET  as string)
 
     jwt.verify(
         token,
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN_SECRET  as string,
         async (err:any, decoded:any) => {
             if (err) return res.status(403).json({ message: 'Forbidden' })
 
