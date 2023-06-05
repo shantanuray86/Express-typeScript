@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const {promisify}= require('util');
 const appendFile = promisify(fs.appendFile);
+import { Request, Response,NextFunction } from "express";
 
 // async function requestLogger(req, res, next){
 //     try {
@@ -14,7 +15,7 @@ const appendFile = promisify(fs.appendFile);
 //     }
 // }
 const fsPromises = require('fs').promises;
-async function requestLogger(req, res, next){
+async function requestLogger(req:Request, res:Response, next:NextFunction){
     try {
         const logMsg = `${new Date()} - ${req.method} - ${req.url} \n`;
         await fsPromises.appendFile('RequestLoggertwo.log', logMsg);

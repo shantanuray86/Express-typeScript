@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const UserModel = require("../models/User");
+import { Request, Response,NextFunction } from "express";
 
-var checkUserAuth = async (req, res, next) => {
+var checkUserAuth = async (req:Request, res:Response, next:NextFunction) => {
  // console.log(req);
   let token
   const { authorization } = req.headers
@@ -14,7 +15,7 @@ var checkUserAuth = async (req, res, next) => {
       const { email } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
       console.log(email);
       // Get User from Token
-      req.user = await UserModel.find({email:email}).select('password')
+      req.body.user = await UserModel.find({email:email}).select('password')
 
       next()
     } catch (error) {
@@ -27,5 +28,4 @@ var checkUserAuth = async (req, res, next) => {
   }
 }
 
-//export default checkUserAuth
 module.exports = checkUserAuth;

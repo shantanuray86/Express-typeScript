@@ -1,4 +1,5 @@
 const fsPromises = require('fs').promises;
+import { Request, Response,NextFunction } from "express";
 
 // const errorHandler = (err, req, res, next) => {
 //     var statusCode = err.statusCode || 500;
@@ -8,7 +9,7 @@ const fsPromises = require('fs').promises;
 //     res.status(statusCode).send(err.message);
 // next();
 // }
-async function errorHandler(err:Error, req, res, next){
+async function errorHandler(err:any, req:Request, res:Response, next:NextFunction){
     var statusCode = err.statusCode || 500;
     const logMsg = `${new Date()} - ${req.method} - ${req.url} - ${statusCode} - ${err.message} \n`;
     await fsPromises.appendFile('errorLogger.log', logMsg);
