@@ -1,4 +1,13 @@
 import mongoose from  "mongoose";
+
+// Document interface
+interface User {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+  password: string;
+}
 const UserSchema = new mongoose.Schema(
   {
     firstname: {

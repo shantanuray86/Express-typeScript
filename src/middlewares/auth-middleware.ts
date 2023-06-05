@@ -1,6 +1,9 @@
-const jwt = require('jsonwebtoken');
-const UserModel = require("../models/User");
+
+import UserModel from "../models/User";
 import { Request, Response,NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 var checkUserAuth = async (req:Request, res:Response, next:NextFunction) => {
  // console.log(req);
@@ -12,10 +15,13 @@ var checkUserAuth = async (req:Request, res:Response, next:NextFunction) => {
       token = authorization.split(' ')[1]
 
       // Verify Token
-      const { email } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+      interface JwtPayload {
+        email: string
+      }
+      let  {email} =jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string) as JwtPayload;
       console.log(email);
       // Get User from Token
-      req.body.user = await UserModel.find({email:email}).select('password')
+      req.body.user = await UserModel.findOne({email:email}).select('password')
 
       next()
     } catch (error) {

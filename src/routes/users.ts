@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const User = require("../models/User");
-const Post = require("../models/Post");
+//const User = require("../models/User");
+import User from "../models/User";
 const bcrypt = require("bcrypt");
 const checkUserAuth = require('../middlewares/auth-middleware');
 import { Request, Response } from "express";
@@ -8,11 +8,10 @@ import { Request, Response } from "express";
 
 //GET ALL USERS
 
-router.get("/all-users",checkUserAuth, async (req:Request, res:Response) => {
-  let user;
+router.get("/all-users", async function(req:Request, res:Response) {
   try {
-    user = await User.find();
-
+    let user = await User.find();
+    console.log("userts",user);
     res.status(200).json({"response":user,"status":"success"});
   } catch (err) {
     res.status(500).json(err);
@@ -24,8 +23,7 @@ router.get("/all-users",checkUserAuth, async (req:Request, res:Response) => {
 router.get("/:id", async (req:Request, res:Response) => {
   try {
     const user = await User.findById(req.params.id);
-    const {...others } = user._doc;
-    res.status(200).json(others);
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -33,7 +31,7 @@ router.get("/:id", async (req:Request, res:Response) => {
 
 // //UPDATE
 router.put("/:id", async (req:Request, res:Response) => {
-  console.log(req.body);
+  
   if (req.body._id === req.params.id) {
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
@@ -89,7 +87,7 @@ router.post("/add", async (req:Request, res:Response) => {
     //   type: req.body.accounttype,
     // },
   });
-  const buffet = await User.save();
+  const buffet = await User.create();
     res.status(200).json(buffet);
   } catch (err) {
     res.status(500).json(err);
@@ -99,13 +97,13 @@ router.post("/add", async (req:Request, res:Response) => {
 
 // User Login
 
-router.post('/login',async (req:Request, res:Response)=>{
-  try {
-    const user = await User.findOne({email:req.body.email})
-  } catch (error) {
+// router.post('/login',async (req:Request, res:Response)=>{
+//   try {
+//     const user = await User.findOne({email:req.body.email})
+//   } catch (error) {
     
-  }
-})
+//   }
+// })
 
 //module.exports = router;
 export default router;

@@ -28,7 +28,7 @@ router.post("/register", async (req:Request, res:Response) => {
         const accessToken = jwt.sign(
             { "email": user.email },
             process.env.ACCESS_TOKEN_SECRET  as string,
-            { expiresIn: '30s' }
+            { expiresIn: '1d' }
         );
         const refreshToken = jwt.sign(
             { "username": user.email },
@@ -157,8 +157,10 @@ router.get("/checktokenvalidity", async(req:Request, res:Response)=>{
     const token = (req.headers.authorization as string).split(' ')[1]
     let email:any;
     // Verify Token
-     email = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET  as string)
-
+    console.log(token);
+    console.log(process.env.ACCESS_TOKEN_SECRET  as string);
+    email = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET  as string)
+    console.log(jwt.verify(token, process.env.ACCESS_TOKEN_SECRET  as string));
     jwt.verify(
         token,
         process.env.ACCESS_TOKEN_SECRET  as string,
